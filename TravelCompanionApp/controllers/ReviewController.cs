@@ -13,10 +13,11 @@ public class ReviewController : ControllerBase
     private readonly ReviewMapper reviewMapper;
     private readonly UserRepository userRepository;
 
-    public ReviewController(ReviewRepository reviewRepository, ReviewMapper reviewMapper)
+    public ReviewController(ReviewRepository reviewRepository, ReviewMapper reviewMapper, UserRepository userRepository)
     {
         this.reviewRepository = reviewRepository;
         this.reviewMapper = reviewMapper;
+        this.userRepository = userRepository;
     }
 
     [HttpGet("users/{userId:guid}")]
@@ -30,9 +31,13 @@ public class ReviewController : ControllerBase
     public async Task<IActionResult> create(Guid userId, Guid creatorId, [FromBody] ReviewDTO reviewDto)
     {
         var review = reviewMapper.toEntity(reviewDto);
-        review.UserId = userRepository.getById(userId).Id;
-        review.CreatorId = userRepository.getById(creatorId).Id;
+        var user = userRepository.getById(userId);
+        var creator = userRepository.getById(creatorId);
+        review.UserId = user.Id;
+        review.CreatorId = creator.Id;
         var res = reviewRepository.save(review);
         return Ok(reviewMapper.toDTO(res));
     }
+    
+
 }

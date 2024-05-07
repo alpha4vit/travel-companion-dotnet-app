@@ -26,7 +26,18 @@ builder.Services.AddScoped<PostRepository>();
 builder.Services.AddScoped<PostController>();
 builder.Services.AddScoped<PostResponseRepository>();
 builder.Services.AddScoped<PostResponseController>();
-
+builder.Services.AddScoped<ReviewRepository>();
+builder.Services.AddScoped<ReviewController>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin(); 
+            builder.AllowAnyMethod();
+            builder.AllowAnyHeader();
+        });
+});
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -38,5 +49,5 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();   
 app.MapControllers();
-
+app.UseCors("AllowAllOrigins");
 app.Run();

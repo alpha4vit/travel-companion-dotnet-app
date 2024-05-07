@@ -30,9 +30,9 @@ public class PostResponseController : ControllerBase
     }
 
     [HttpDelete("{responseId:long}")]
-    public async Task<IActionResult> deleteById(long id)
+    public async Task<IActionResult> deleteById(long responseId)
     {
-        postResponseRepository.deleteById(id);
+        postResponseRepository.deleteById(responseId);
         return Ok();
     }
 

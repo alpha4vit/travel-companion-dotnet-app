@@ -42,12 +42,35 @@ public class PostController : ControllerBase
     }
     
     [HttpGet("pages")]
-    public Object GetAll(int limit, int page)
+    public async Task<IActionResult> GetAll(int limit, int page)
     {
         var posts = postRepository.getPage(page, limit);
-        Response.Headers.Add("total_count", postRepository.getAllCount().ToString());
-        return postMapper.toDTOs(posts);
+        var postDtos = postMapper.toDTOs(posts);
+
+        var responseBody = new
+        {
+            data = new
+            {
+                body = postDtos,
+                headers = new
+                {
+                    total_count = postRepository.getAllCount().ToString()
+                }
+            },
+            status = 200,
+            statusText = "",
+            headers = new
+            {
+                cache_control = "no-cache, no-store, max-age=0, must-revalidate",
+                content_type = "application/json",
+                expires = "0",
+                pragma = "no-cache"
+            }
+        };
+
+        return Ok(responseBody);
     }
+    
     
     [HttpGet("user/{userId:guid}")]
     public Object GetAllByUser(Guid userId)
@@ -62,8 +85,9 @@ public class PostController : ControllerBase
         var user = userRepository.getById(userId);
         var post = postMapper.toEntity(postDto);
         post.UserId = user.Id;
-        post.User = user;
-        return Ok(postMapper.toDTO(postRepository.save(post)));
+        var res = postRepository.save(post);
+        res.User = user;
+        return Ok(postMapper.toDTO(res));
     }
 
     [HttpPost("{postId:guid}/respond/{userId:guid}")]

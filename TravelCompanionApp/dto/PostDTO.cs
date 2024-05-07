@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using TravelCompanionApp.converters;
 using TravelCompanionApp.models;
 using Route = TravelCompanionApp.models.Route;
 
@@ -24,7 +26,8 @@ public class PostDTO
     [JsonPropertyName("date_back")]
     public DateTime? DateBack { get; set; }
 
-    [JsonPropertyName("type")]
+    [JsonPropertyName("post_type")]
+    [JsonConverter(typeof(PostTypeJsonConverter))]
     public PostType? Type { get; set; }
     
     [JsonPropertyName("user_id")]

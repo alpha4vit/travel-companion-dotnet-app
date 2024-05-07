@@ -50,6 +50,7 @@ public class PostRepository {
     public Post update(Post post)
     {
         var res = db.Posts.Update(post);
+        db.SaveChanges();
         return res.Entity;
     }
 

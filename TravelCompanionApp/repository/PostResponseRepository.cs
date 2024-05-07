@@ -33,5 +33,6 @@ public class PostResponseRepository
     public void deleteById(long id)
     {
         db.PostResponses.Remove(getById(id));
+        db.SaveChanges();
     }
 }

@@ -21,6 +21,11 @@ public class ApplicationContext : DbContext
     {
         // Database.EnsureCreated();
     }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

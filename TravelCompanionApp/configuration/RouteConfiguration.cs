@@ -15,8 +15,10 @@ public class RouteConfiguration : IEntityTypeConfiguration<models.Route>
         builder.HasOne(r => r.Departure)
             .WithMany(a => a.Departures)
             .HasForeignKey(r => r.DepartureId);
+        builder.Navigation(r => r.Departure).AutoInclude();
         builder.HasOne(r => r.Destination)
             .WithMany(a => a.Destinations)
             .HasForeignKey(r => r.DestinationId);
+        builder.Navigation(r => r.Destination).AutoInclude();
     }
 }
