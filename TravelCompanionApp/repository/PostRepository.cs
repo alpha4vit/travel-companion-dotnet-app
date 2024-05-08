@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using TravelCompanionApp.exception;
 using Post = TravelCompanionApp.models.Post;
 
 namespace TravelCompanionApp.repository;
@@ -19,7 +20,10 @@ public class PostRepository {
 
     public Post getById(Guid id)
     {
-        return db.Posts.Find(id);
+        var post = db.Posts.Find(id);
+        if (post == null)
+            throw new ResourceNotFoundException("Post with this id not found!");
+        return post;
     }
     
     public List<Post> getPage(int page, int limit)

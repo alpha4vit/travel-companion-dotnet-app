@@ -11,12 +11,15 @@ public class PostDTO
     [JsonPropertyName("id")]
     public Guid Id { get; set; }
     
+    [StringLength(50, MinimumLength = 5, ErrorMessage = "Длина заголовка должна быть от 5 до 50 символов")]
     [JsonPropertyName("title")]
     public string? Title { get; set; }
 
+    [StringLength(300, ErrorMessage = "Длина описания должна не превышать 300 символов")]
     [JsonPropertyName("description")]
     public string? Description { get; set; }
 
+    [StringLength(50, ErrorMessage = "Длина fee должна не превышать 50 символов")]
     [JsonPropertyName("fee")]
     public string? Fee { get; set; }
     

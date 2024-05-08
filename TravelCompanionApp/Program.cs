@@ -2,20 +2,30 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TravelCompanionApp;
 using TravelCompanionApp.controllers;
+using TravelCompanionApp.dto;
+using TravelCompanionApp.exception;
+using TravelCompanionApp.mailsenders;
 using TravelCompanionApp.mapper;
 using TravelCompanionApp.repository;
+using TravelCompanionApp.validators;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new ExceptionFilter());
+    options.Filters.Add(new ValidationExceptionFilter());
+});
+builder.Services.AddScoped<MailSender>();
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 builder.Services.AddScoped<PostMapper>();
 builder.Services.AddScoped<PostResponseMapper>();
 builder.Services.AddScoped<ReviewMapper>();
 builder.Services.AddScoped<UserMapper>();
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//validators
+builder.Services.AddScoped<PostDTOValidator>();
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));

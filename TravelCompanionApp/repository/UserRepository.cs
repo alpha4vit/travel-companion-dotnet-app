@@ -1,3 +1,4 @@
+using TravelCompanionApp.exception;
 using TravelCompanionApp.models;
 
 namespace TravelCompanionApp.repository;
@@ -18,7 +19,10 @@ public class UserRepository
 
     public User getById(Guid id)
     {
-        return db.Users.Find(id);
+        var user = db.Users.Find(id);
+        if (user == null)
+            throw new ResourceNotFoundException("User with this id not found!"); 
+        return user;
     }
 
     public User update(User user, Guid id)

@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using TravelCompanionApp.dto;
+using TravelCompanionApp.exception;
 using TravelCompanionApp.mapper;
 using TravelCompanionApp.repository;
+using TravelCompanionApp.validators;
 
 namespace TravelCompanionApp.controllers;
 
@@ -12,33 +14,36 @@ public class PostController : ControllerBase
     private readonly PostRepository postRepository;
     private readonly UserRepository userRepository;
     private readonly PostMapper postMapper;
-    private PostResponseMapper postResponseMapper;
-    private PostResponseRepository postResponseRepository;
+    private readonly PostResponseMapper postResponseMapper;
+    private readonly PostResponseRepository postResponseRepository;
+    private readonly PostDTOValidator postDtoValidator;
     
     public PostController(
         PostRepository postRepository, 
         UserRepository userRepository,
         PostMapper postMapper,
         PostResponseMapper postResponseMapper,
-        PostResponseRepository postResponseRepository)
+        PostResponseRepository postResponseRepository, 
+        PostDTOValidator postDtoValidator)
     {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.postMapper = postMapper;
         this.postResponseMapper = postResponseMapper;
         this.postResponseRepository = postResponseRepository;
+        this.postDtoValidator = postDtoValidator;
     }
     
     [HttpGet]
-    public Object GetPosts()
+    public async Task<IActionResult> GetPosts()
     {
-        return postMapper.toDTOs(postRepository.getAll());
+        return Ok(postMapper.toDTOs(postRepository.getAll()));
     }
     
     [HttpGet("{id:guid}")]
-    public Object GetPostById(Guid id)
+    public async Task<IActionResult> GetPostById(Guid id)
     {
-        return postMapper.toDTO(postRepository.getById(id));
+        return Ok(postMapper.toDTO(postRepository.getById(id)));
     }
     
     [HttpGet("pages")]
@@ -82,6 +87,7 @@ public class PostController : ControllerBase
     [HttpPost("{userId:guid}/create")]
     public async Task<IActionResult> createPost(Guid userId, [FromBody] PostDTO postDto)
     {
+        postDtoValidator.validate(postDto);
         var user = userRepository.getById(userId);
         var post = postMapper.toEntity(postDto);
         post.UserId = user.Id;
@@ -111,6 +117,7 @@ public class PostController : ControllerBase
     [HttpPatch("{postId:guid}")]
     public async Task<IActionResult> updatePost(Guid postId, [FromBody] PostDTO postDto)
     {
+        postDtoValidator.validate(postDto);
         var res = postRepository.update(postMapper.toEntity(postDto));
         return Ok(postMapper.toDTO(res));
     }

@@ -43,7 +43,6 @@ public class PostResponseController : ControllerBase
         postResponse.PostId = postRepository.getById(postId).Id;
         postResponse.UserId = userRepository.getById(userId).Id;
         var res = postResponseRepository.save(postResponse);
-        // TODO send email message
         return Ok(postResponseMapper.toDTO(res));
     }
 }
